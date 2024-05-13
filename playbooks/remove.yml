@@ -1,0 +1,51 @@
+---
+- name: Remove Installed Packages
+  hosts: localhost
+  become: true
+  tasks:
+    - name: Remove 1Password CLI
+      ansible.builtin.apt:
+        name: 1password-cli
+        state: absent
+      tags:
+        - linux-full
+
+    - name: Remove Python and pip packages
+      ansible.builtin.apt:
+        name:
+          - python3
+          - python3-pip
+          - python3-venv
+        state: absent
+      tags:
+        - linux-full
+
+    - name: Remove Neovim
+      ansible.builtin.apt:
+        name: neovim
+        state: absent
+      tags:
+        - linux-full
+
+    - name: Remove Tmux
+      ansible.builtin.apt:
+        name: tmux
+        state: absent
+      tags:
+        - linux-minimal
+        - linux-full
+
+    - name: Remove Zsh
+      ansible.builtin.apt:
+        name: zsh
+        state: absent
+      tags:
+        - linux-minimal
+        - linux-full
+
+    - name: Remove Kitty
+      ansible.builtin.apt:
+        name: kitty
+        state: absent
+      tags:
+        - linux-full

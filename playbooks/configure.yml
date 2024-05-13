@@ -1,0 +1,27 @@
+---
+- name: Configure System
+  hosts: localhost
+  become: true
+  vars_files:
+    - ../vars/vars.yml
+  tasks:
+    - include_tasks: ../tasks/1password.yml
+      tags: linux-full
+
+    - include_tasks: ../tasks/python.yml
+      tags: linux-full
+
+    - include_tasks: ../tasks/neovim.yml
+      tags: linux-full
+
+    - include_tasks: ../tasks/tmux.yml
+      tags: linux-minimal, linux-full
+
+    - include_tasks: ../tasks/zsh.yml
+      tags: linux-minimal, linux-full
+
+    - include_tasks: ../tasks/kitty.yml
+      tags: linux-full
+
+  handlers:
+    - include: ../handlers/handlers.yml

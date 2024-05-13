@@ -1,0 +1,23 @@
+---
+- name: Install Kitty emulator
+  ansible.builtin.apt:
+    name: kitty
+    state: present
+    update_cache: yes
+
+- name: Set Kitty as default terminal emulator
+  ansible.builtin.shell: |
+    update-alternatives --install /usr/bin/x-terminal-emulator x-terminal-emulator /usr/bin/kitty 50
+
+- name: Ensure Kitty configuration directory exists
+  ansible.builtin.file:
+    path: "{{ ansible_env.HOME }}/.config/kitty"
+    state: directory
+    mode: '0755'
+
+- name: Copy Kitty configuration file
+  ansible.builtin.copy:
+    src: kitty
+    dest: "{{ ansible_env.HOME }}/.config/kitty"
+    mode: '0644'
+  notify: Reload Kitty

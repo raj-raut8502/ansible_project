@@ -1,0 +1,28 @@
+---
+- name: "Tmux | Debian | Install tmux"
+  ansible.builtin.apt:
+    name: tmux
+    state: present
+  become: true
+  tags:
+    - linux-minimal
+    - linux-full
+
+- name: "Tmux | Install TPM"
+  ansible.builtin.git:
+    repo: https://github.com/tmux-plugins/tpm
+    dest: ~/.tmux/plugins/tpm
+  tags:
+    - linux-minimal
+    - linux-full
+
+- name: "Tmux | Configure tmux"
+  ansible.builtin.copy:
+    src: tmux.conf
+    dest: "{{ ansible_user_dir }}/.config/"
+    mode: "0644"
+    directory_mode: "0755"
+    force: true
+  tags:
+    - linux-minimal
+    - linux-full

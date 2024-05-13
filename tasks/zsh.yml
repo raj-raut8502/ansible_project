@@ -1,0 +1,100 @@
+---
+- name: Install Zsh
+  ansible.builtin.apt:
+    name: zsh
+    state: present
+  become: true
+  tags:
+    - linux-minimal
+    - linux-full
+
+- name: Install ZSH and plugins
+  ansible.builtin.homebrew:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - zsh
+  tags:
+    - mac-minimal
+    - mac-full
+
+- name: "Zsh | Detect oh-my-zsh"
+  ansible.builtin.stat:
+    path: "{{ ansible_user_dir }}/.oh-my-zsh"
+  register: ohmyzsh
+  tags:
+    - mac-minimal
+    - mac-full
+    - linux-minimal
+    - linux-full
+
+- name: "Zsh | Install oh-my-zsh if not installed"
+  when: not ohmyzsh.stat.exists
+  tags:
+    - mac-minimal
+    - mac-full
+    - linux-minimal
+    - linux-full
+  block:
+    - name: "Zsh | Download oh-my-zsh Install Script"
+      ansible.builtin.get_url:
+        url: "https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh"
+        dest: "{{ ansible_user_dir }}/oh-my-zsh.install.sh"
+        mode: "0755"
+
+    - name: "Zsh | Run oh-my-zsh Install Script"
+      ansible.builtin.command:
+        cmd: "sh {{ ansible_user_dir }}/oh-my-zsh.install.sh"
+
+- name: Clone zsh-syntax-highlighting repository
+  ansible.builtin.git:
+    repo: https://github.com/zsh-users/zsh-syntax-highlighting.git
+    dest: "{{ ansible_user_dir }}/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting"
+    depth: 1
+  tags:
+    - mac-minimal
+    - mac-full
+    - linux-minimal
+    - linux-full
+
+- name: Add zsh-syntax-highlighting to .zshrc
+  ansible.builtin.lineinfile:
+    dest: "{{ ansible_user_dir }}/.zshrc"
+    line: "source {{ ansible_user_dir }}/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+  tags:
+    - mac-minimal
+    - mac-full
+    - linux-minimal
+    - linux-full
+
+- name: Clone zsh-autosuggestions repository
+  ansible.builtin.git:
+    repo: https://github.com/zsh-users/zsh-autosuggestions.git
+    dest: "{{ ansible_user_dir }}/.oh-my-zsh/custom/plugins/zsh-autosuggestions"
+    depth: 1
+  tags:
+    - mac-minimal
+    - mac-full
+    - linux-minimal
+    - linux-full
+
+- name: Add zsh-autosuggestions to .zshrc
+  ansible.builtin.lineinfile:
+    dest: "{{ ansible_user_dir }}/.zshrc"
+    line: "source {{ ansible_user_dir }}/.oh-my-zsh/custom/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh"
+  tags:
+    - mac-minimal
+    - mac-full
+    - linux-minimal
+    - linux-full
+
+- name: "Zsh | Update .zshrc for all users"
+  ansible.builtin.copy:
+    src: .zshrc
+    dest: "~/.zshrc"
+    mode: "0644"
+  tags:
+    - mac-minimal
+    - mac-full
+    - linux-minimal
+    - linux-full

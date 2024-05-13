@@ -1,0 +1,39 @@
+---
+- name: "Neovim | Debian | Dependencies"
+  ansible.builtin.apt:
+    name:
+      - cmake
+      - curl
+      - pkg-config
+      - libtool
+      - unzip
+      - ansible-lint
+      - ripgrep
+      - lua5.1
+      - luarocks
+      - luajit
+      - neovim
+    state: present
+  become: true
+  tags:
+    - linux-minimal
+    - linux-full
+
+- name: Install Neovim on Debian
+  ansible.builtin.apt:
+    name: neovim
+    state: present
+  become: true
+  tags:
+    - linux-minimal
+    - linux-full
+
+- name: "Neovim | Config folder"
+  ansible.builtin.file:
+    mode: "0755"
+    path: "{{ ansible_user_dir }}/.config/nvim"
+    state: directory
+  tags:
+    - linux
+    - minimal
+    - full
